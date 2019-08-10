@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<style type="text/css">
+			*{
+				margin: 0;
+				padding: 0;
+				
+			}
+			#test{
+				position: absolute;
+				top: 0;
+				left: 0;
+				right: 0;
+				bottom: 0;
+				margin: 100px auto;
+				background-color: pink;
+			}
+		</style>
+	</head>
+	<body>
+		<canvas id="test" width="600" height="600"></canvas>
+	</body>
+	<script type="text/javascript">
+		window.onload = function(){
+			var can = document.querySelector("#test");
+			//判断画布有没有启用
+			if(can.getContext){
+				var cNode = can.getContext("2d");
+				//养成好习惯，在画路径时按照格式
+				//不写save()相同的元素属性会被后边覆盖，写完之后在底部调用restore();
+				//样式容器为栈模式，当多个颜色多个save()多个restore（）时，先入后出，按照这个规律选取属性值
+				cNode.save();
+				cNode.fillStyle="red";
+				cNode.strokeStyle="pink"
+				//beginPath();上边修改样式
+				cNode.beginPath();
+				//beginPath();下边写路径
+				cNode.restore();
+			}
+		}
+	</script>
+</html>

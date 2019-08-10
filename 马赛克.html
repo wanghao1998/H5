@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<title></title>
+		<style type="text/css">
+			*{
+				margin: 0;
+				padding: 0;
+			}
+			#test{
+				position: absolute;
+				top: 0;
+				left: 0;
+				bottom: 0;
+				right: 0;
+				
+				margin: 100px auto;
+				background-color: gray;
+			}
+			
+		</style>
+	</head>
+	<body>
+		<canvas id="test" >
+			<span>你的浏览器不支持，请更换新版本</span>
+		</canvas>
+	</body>
+	<script type="text/javascript">
+		window.onload = function(){
+			var canNode = document.querySelector("#test");
+			if(canNode.getContext){
+				var can = canNode.getContext("2d");
+				var img = new Image();
+				img.src="img/tg.png";
+				img.onload = function(){
+					canNode.width = img.width;
+					canNode.height = img.height;
+					draw();
+				}
+				function draw () {
+					can.drawImage(img,0,0);
+					
+					var oldImage = can.getImageData(0,0,img.width,img.height);
+					var newImage = can.createImageData(img.width,img.height);
+					//马赛克
+				/*
+					1.选取一个马赛克矩形
+					2.从马赛克矩形中随机抽出一个像素点的信息(rgba)
+					3.将整个马赛克矩形中的像素点信息统一调成随机抽出的那个
+				*/
+				//选取一个马赛克矩形
+					
+					var size = 5;
+					for(var i=0;i<oldImage.width/size;i++){
+						for(var j=0;j<oldImage.height/size;j++){
+							//(i,j)  每一个马赛克矩形的坐标
+						//(0,0):  (0,0)  (4,4);[0,4]   //(1,0): (5,0) (9,4)
+						//(0,1):  (0,5)  (4,9)	 	   //(1,1): (5,5) (9,9)
+						
+						
+						
+						//Math.random()  [0,1)
+						//Math.random()*size  [0,5)
+						//Math.floor(Math.random()*size) [0,4]
+						//从马赛克矩形中随机抽出一个像素点的信息(rgba)
+							var getx = i*size+Math.floor(Math.random()*size);
+							var gety = j*size+Math.floor(Math.random()*size);
+							
+							var color = getPxInfo(oldImage,getx,gety);
+							//将整个马赛克矩形中的像素点信息统一调成随机抽出的那个
+							for(var a=0;a<size;a++){
+								for(var b=0;b<size;b++){
+								setPxInfo(newImgdata,i*size+a,j*size+b,color)
+								}
+							}
+						}
+					}
+				}
+				can.clearRect(0,0,oc.width,oc.height);
+				can.putImageData(newImgdata,0,0);
+			}
+			function getPxInfo(imgdata,x,y){
+				//获取像素属性
+				var color = [];
+				var data = imgdata.data;
+				var w = imgdata.width;
+				var h = imgdata.height;
+				
+				color[0]=data[(y*w+x)*4];
+				color[1]=data[(y*w+x)*4+1];
+				color[2]=data[(y*w+x)*4+2];
+				color[3]=data[(y*w+x)*4+3];
+				return color;
+			}
+			
+			function setPxInfo(imgdata,x,y,color){
+				//更改属性
+				var data = imgdata.data;
+				var w = imgdata.width;
+				var h = imgdata.height;
+				data[(y*w+x)*4]=color[0];
+				data[(y*w+x)*4+1]=color[1];
+				data[(y*w+x)*4+2]=color[2];
+				data[(y*w+x)*4+3]=color[3];
+			}
+		}
+	</script>
+</html>
